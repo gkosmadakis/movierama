@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Add a New Movie</h1>
+<div mat-dialog-content>
+  <form>
+    <mat-form-field appearance="fill">
+      <mat-label>Title</mat-label>
+      <input matInput [(ngModel)]="title" name="title">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea matInput [(ngModel)]="description" name="description"></textarea>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSubmit()">Submit</button>
+</div>

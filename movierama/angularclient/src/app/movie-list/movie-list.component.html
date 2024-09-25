@@ -1,0 +1,26 @@
+<div class="movie-list">
+  <!-- Sort Options -->
+  <div>
+    <label>Sort by:</label>
+    <select (change)="onSortCriterionChange($event)">
+      <option value="date">Date</option>
+      <option value="likes">Likes</option>
+      <option value="hates">Hates</option>
+    </select> 
+    <label>Filter by username:</label>
+    <!-- Dropdown to select user -->
+    <select [ngModel]="selectedUser" (change)="onUserSelect($event.target)">
+      <option value="all">All Users</option>
+      <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
+    </select>
+  </div>
+  <button class="fa fa-button" (click)="openAddMovieDialog()" *ngIf="isUserLoggedIn"
+  style="float: right; border-radius: 15px; 
+  background-color: green; padding-right: 30px; padding-left: 30px; padding-top: 10px; 
+  padding-bottom: 10px; cursor:pointer;">New Movie</button>
+  <ul>
+    <li *ngFor="let movie of filteredMovies">
+      <app-movie-item [movie]="movie"></app-movie-item>
+    </li>
+  </ul>
+</div>

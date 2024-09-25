@@ -1,0 +1,21 @@
+<div class = "container">
+	<div class="col-6" style="border: 2px solid;margin-bottom: 10px;">
+	   <h3>{{ movie.title }}</h3> 
+	   <p>Posted by: {{ movie.user.username }} {{datePosted}} days ago 
+	   <p>{{ movie.description }}</p> 
+		<div class ="d-flex justify-content-start bd-highlight mb-3">
+		   <div class="p-2 bd-highlight" >
+		  	 <button (click)="onLikeMovie(movie)" >👍 Like ({{ movie.likesCount }})</button>
+			</div>
+		   <div class="p-2 bd-highlight">|</div>	
+		   <div class="p-2 bd-highlight" >
+			<button (click)="onHateMovie(movie)">👎 Hate ({{ movie.hatesCount }})</button>
+			</div>  
+			<div class="p-2" *ngIf="userReacted"> {{reactionStatus}}</div>
+			<div class="p-2" *ngIf="userReacted" (click)="changeReaction(movie)"
+				style="cursor:pointer;color:blue;text-decoration:underline;">{{undoReaction}} 
+			</div>
+	  	</div>
+  	</div>
+</div>
+
