@@ -336,18 +336,13 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-body" style=" display: flex;
-  justify-content: space-between;">
-          <h2  class="card-title">{{ title }}</h2>
+      <div class="header">
+        <div class="header-body" >
+          <h2  class="header-title">{{ title }}</h2>
           <div class="row" *ngIf="!isUserLoggedIn">
-            <a style="cursor:pointer;
-            color:blue;
-            text-decoration:underline;"(click)="openLoginDialog()">Login </a>
-            <p style="margin-left: 0.5rem;margin-right: 0.5rem"> or </p>
-            <a style="cursor:pointer;
-            color:blue;
-            text-decoration:underline;" (click)="openSignUpDialog()"> Signup</a>
+            <a class='login-link' (click)="openLoginDialog()">Login </a>
+            <div class='inner-text'> or </div>
+            <a class="signup-link" (click)="openSignUpDialog()"> Signup</a>
           </div>
           <div class="row" *ngIf="isUserLoggedIn">
             <p>Welcome back {{username}}</p>

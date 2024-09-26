@@ -2,3 +2,46 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.header-body{
+display: flex;
+justify-content: space-between;
+}
+
+.inner-text{
+margin-left: 0.5rem;
+margin-right: 0.5rem
+}
+
+.login-link{
+cursor:pointer;
+color:blue!important;
+text-decoration:underline;
+}
+
+.signup-link{
+cursor:pointer;
+color:blue!important;
+text-decoration:underline;
+}
+
+.fa.fa-button.movie-button{
+float: right; 
+border-radius: 15px; 
+background-color: green; 
+padding-right: 30px; 
+padding-left: 30px; 
+padding-top: 10px; 
+padding-bottom: 10px; 
+cursor:pointer;
+}
+
+.col-6.movie-item{
+border: 2px solid;
+margin-bottom: 10px;
+}
+.p-2.change-reaction{
+cursor:pointer;
+color:blue;
+text-decoration:underline;
+}

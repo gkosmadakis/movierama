@@ -14,10 +14,8 @@
       <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
     </select>
   </div>
-  <button class="fa fa-button" (click)="openAddMovieDialog()" *ngIf="isUserLoggedIn"
-  style="float: right; border-radius: 15px; 
-  background-color: green; padding-right: 30px; padding-left: 30px; padding-top: 10px; 
-  padding-bottom: 10px; cursor:pointer;">New Movie</button>
+  <button class="fa fa-button movie-button" (click)="openAddMovieDialog()" 
+    *ngIf="isUserLoggedIn">New Movie</button>
   <ul>
     <li *ngFor="let movie of filteredMovies">
       <app-movie-item [movie]="movie"></app-movie-item>
