@@ -64,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")
         		&& !request.getRequestURI().endsWith("signup")) {
         	if(request.getRequestURI().endsWith("login")) {
+        		filterChain.doFilter(request, response);
         		jwt = authorizationHeader.substring(7);
         		username = jwtUtil.extractUsername(jwt);
         		UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
