@@ -3,19 +3,27 @@
 	   <h3>{{ movie.title }}</h3> 
 	   <p>Posted by: {{ movie.user.username }} {{datePosted}} days ago 
 	   <p>{{ movie.description }}</p> 
-		<div class ="d-flex justify-content-start bd-highlight mb-3">
-		   <div class="p-2 bd-highlight" >
-		  	 <button (click)="onLikeMovie(movie)" >👍 Like ({{ movie.likesCount }})</button>
+	   <div *ngIf="votes && votes.length > 0; ">
+			
+			<div *ngFor="let item of votes">
+				<div class="p-2" *ngIf="userReacted"> {{reactionStatus}}
+				</div>
+				<div class="p-2 change-reaction" *ngIf="userReacted" 
+				(click)="changeReaction(item.id)">{{undoReaction}} 
+				</div>
 			</div>
-		   <div class="p-2 bd-highlight">|</div>	
-		   <div class="p-2 bd-highlight" >
-			<button (click)="onHateMovie(movie)">👎 Hate ({{ movie.hatesCount }})</button>
-			</div>  
-			<div class="p-2" *ngIf="userReacted"> {{reactionStatus}}</div>
-			<div class="p-2 change-reaction" *ngIf="userReacted" 
-				(click)="changeReaction(movie)">{{undoReaction}} 
-			</div>
-	  	</div>
+			
+		</div>
+			<div class ="d-flex justify-content-start bd-highlight mb-3"  >
+				<div class="p-2 bd-highlight" >
+					<button (click)="onLikeMovie(movie)" >👍 Like ({{ movie.likes }})</button>
+					</div>
+				<div class="p-2 bd-highlight">|</div>	
+				<div class="p-2 bd-highlight" >
+					<button (click)="onHateMovie(movie)">👎 Hate ({{ movie.hates }})</button>
+					</div>  
+					
+				</div>
   	</div>
 </div>
 

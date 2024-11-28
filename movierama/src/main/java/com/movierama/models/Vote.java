@@ -1,12 +1,11 @@
 package com.movierama.models;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-
 
 
 @Entity
@@ -14,10 +13,9 @@ public class Vote {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private User user;
-    @ManyToOne
-    private Movie movie;
+    private Long userId;
+    private Long movieId;
+    @Enumerated(EnumType.STRING)
     private VoteType voteType; // Enum: LIKE, HATE
     
 	public Long getId() {
@@ -26,17 +24,17 @@ public class Vote {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public User getUser() {
-		return user;
+	public Long getUserId() {
+		return userId;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
-	public Movie getMovie() {
-		return movie;
+	public Long getMovieId() {
+		return movieId;
 	}
-	public void setMovie(Movie movie) {
-		this.movie = movie;
+	public void setMovieId(Long movieId) {
+		this.movieId = movieId;
 	}
 	public VoteType getVoteType() {
 		return voteType;

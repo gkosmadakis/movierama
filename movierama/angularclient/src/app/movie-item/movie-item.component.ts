@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { Movie } from '../models/movie.model';
 import { MovieService } from '../services/MovieService';
 import { LoginService } from '../services/LoginService';
+import { VoteService } from '../services/VoteService';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/AuthService';
-import { User } from '../models/user.model';
+import { Vote } from '../models/vote.model';
 
 @Component({
 	selector: 'app-movie-item',
@@ -17,18 +18,19 @@ export class MovieItemComponent {
 	datePosted: number = 0;
 	username: string = '';
 	moviesUserLiked: number[] = [];
-	likesCount: number = 0;
-	hatesCount: number = 0;
+	likes: number = 0;
+	hates: number = 0;
 	isMovieOwner: boolean = false;
 	userReacted: boolean = false;
 	reactionStatus: string = '';
 	undoReaction: string = '';
 	movieServiceSubscription!: Subscription;
 	movies: Movie[] = [];
-	numberOfReactions: number = 0;
+	votes: Vote[] = [];
 
 	constructor(private movieService: MovieService, 
-		private loginService: LoginService, private authService: AuthService) { }
+		private loginService: LoginService, private authService: AuthService, private voteService: VoteService) { }
+
 	ngOnInit(): void {
     this.getDaysFromPosted();
   }
@@ -42,86 +44,97 @@ export class MovieItemComponent {
 
 	// Call the service to increment the like count
 	onLikeMovie(movie: Movie) {
-		if(this.numberOfReactions >= 2){
-			return;
-		}
-		if(this.likesCount > 0 || this.hatesCount > 0){
-			this.changeReaction(movie);
-		}
-		if(movie.user.username != this.authService.getCurrentUser().username){
-		//	this.movieService.likeMovie(movie);
-			this.moviesLikedByUser(movie);
-			this.userReacted = true;
-			this.reactionStatus = 'You like this movie'; 
-			this.undoReaction = 'Unlike';
-		}
-		this.numberOfReactions++;
+		this.votes = [];
+			const vote = {
+				id: 0,
+				movieId: movie.id,
+				userId: movie.user.id,
+				voteType: 'like' as any
+			}
+			console.log('Calling vote for like');
+			this.movieServiceSubscription = this.voteService.voteMovie(vote).subscribe( { next: (response) => {
+				console.log('A new vote is added ',response);
+				if (response.status === 'duplicate') {
+					alert(response.message); // Show message if vote already exists
+				  } else {
+					alert('Vote submitted successfully!');
+					console.log('Saved vote:', response);
+					this.votes.push(response.vote);
+					this.userReacted = true;
+					this.reactionStatus = 'You like this movie'; 
+					this.undoReaction = 'Unlike';
+					this.reloadVotes(response.vote.movieId);
+				  }
+			},
+			error: (err) => {
+			  console.error('Error submitting vote:', err);
+			}
+		  });
 	  }
 	
 	  // Call the service to increment the hate count
 	  onHateMovie(movie: Movie) {
-		if(this.numberOfReactions >= 2){
-			return;
+		this.votes = [];
+		const vote = {
+			id: 0,
+			movieId: movie.id,
+			userId: movie.user.id,
+			voteType: 'hate' as any
 		}
-		if(this.likesCount > 0 || this.hatesCount > 0){
-			this.changeReaction(movie);
+		console.log('Calling vote for hate');
+		this.movieServiceSubscription = this.voteService.voteMovie(vote).subscribe( { next: (response) => {
+			console.log('A new vote is added ',response);
+			if (response.status === 'duplicate') {
+				alert(response.message); // Show message if vote already exists
+			  } else {
+				alert('Vote submitted successfully!');
+				console.log('Saved vote:', response);
+				this.votes.push(response.vote);
+				this.userReacted = true;
+				this.reactionStatus = 'You hate this movie'; 
+				this.undoReaction = 'Unhate';
+				this.reloadVotes(response.vote.movieId);
+			  }
+			
+		},
+		error: (err) => {
+		  console.error('Error submitting vote:', err);
 		}
-		if(movie.user.username != this.authService.getCurrentUser().username){
-			//this.movieService.hateMovie(movie);
-			this.moviesHatedByUser(movie);
-			this.userReacted = true;
-			this.reactionStatus = 'You hate this movie';
-			this.undoReaction = 'Unhate'; 
-		}
-		this.numberOfReactions++;
+	  });
 	  }
 
-	  moviesLikedByUser(movie: Movie){
-		this.moviesUserLiked.push(movie.id);
-		this.moviesUserLiked.forEach(item =>{
-			if(movie.id == item && this.likesCount==0){
-				this.movie.likesCount++;
-				this.likesCount++;
-			}
-			if(this.hatesCount == 1){
-				this.movie.likesCount--;
-				this.hatesCount--;
-			}
-		});
-	  }
-	  
-	  moviesHatedByUser(movie: Movie){
-		this.moviesUserLiked.push(movie.id);
-		this.moviesUserLiked.forEach(item =>{
-			if(movie.id == item && this.hatesCount==0){
-				this.movie.hatesCount++;
-				this.hatesCount++;
-			}
-			if(this.likesCount == 1){
-				this.movie.likesCount--;
-				this.likesCount--;
-			}
-		});
-	  }
-
-	  changeReaction(movie: Movie){
+	  changeReaction(id: number){
+		console.log('ID to delete is ', id);
 		if(this.reactionStatus == 'You like this movie'){
-			this.userReacted = false;
-			this.moviesUserLiked.forEach(item =>{
-				if(movie.id == item && this.likesCount == 1){
-					this.movie.likesCount--;
-					this.likesCount--;
-				}
+			this.movieServiceSubscription = this.voteService.removeVote(id).subscribe(data => {
+				console.log('Like is removed');
+				this.movieServiceSubscription = this.voteService.getLikesByMovieId(this.movie.id).subscribe(data => {
+				  this.movie.likes = data.length;
+				  console.log('Reload likes for movie id ',this.movie.id);
+				});
 			});
 		}
 		else {
-			this.userReacted = false;
-			this.moviesUserLiked.forEach(item =>{
-				if(movie.id == item && this.hatesCount == 1){
-					this.movie.hatesCount--;
-					this.hatesCount--;
-				}
+		this.movieServiceSubscription = this.voteService.removeVote(id).subscribe(data => {
+				console.log('hate is removed');
+				this.movieServiceSubscription = this.voteService.getHatesByMovieId(this.movie.id).subscribe(data => {
+				  this.movie.hates = data.length;
+				  console.log('Reload hates for movie id ',this.movie.id);
+				});
 			});
 		}
+		this.votes = [];
+		this.userReacted = false;
+	  }
+
+	  reloadVotes(movieId: number) {
+		this.movieServiceSubscription = this.voteService.getLikesByMovieId(movieId).subscribe(data => {
+			this.movie.likes = data.length;
+			console.log('Reload likes for movie id ',movieId, data.length);
+		});
+		this.movieServiceSubscription = this.voteService.getHatesByMovieId(movieId).subscribe(data => {
+			this.movie.hates = data.length;
+			console.log('Reload hates for movie id ',movieId, data.length);
+		});
 	  }
 }

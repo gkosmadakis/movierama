@@ -20,6 +20,7 @@ export class MovieListComponent implements OnInit , OnDestroy {
   isUserLoggedIn: boolean = false;
   selectedUser: string = 'all'; // Initially, show all movies
   filteredMovies : Movie[] = [];
+  selectedUserId : number = 0;
 
   constructor(private movieService: MovieService, public dialog: MatDialog,private loginService: LoginService) {}
 
@@ -28,8 +29,7 @@ export class MovieListComponent implements OnInit , OnDestroy {
       this.isUserLoggedIn = isLoggedIn; // Check if user is logged in
       });
      // Call getMovies to fetch the movies from the API and push them into the movieSubject
-     this.movieService.getMovies().subscribe();
-    this.movieServiceSubscription = this.movieService.movieSubject.subscribe(data => {
+     this.movieService.getMovies().subscribe(data => {
       this.movies = data;
       console.log('Loaded all stored movies ',this.movies);
       this.filteredMovies = this.movies;
@@ -51,6 +51,10 @@ export class MovieListComponent implements OnInit , OnDestroy {
   onUserSelect(newValue: any) {
     console.log(newValue);
     this.selectedUser = newValue.value;
+    var data = this.users.find(x => x.username === newValue.value);
+    if(data != undefined) {
+      this.selectedUserId = data.id;
+    }
     this.filterMovies();
 }
 
@@ -59,20 +63,35 @@ filterMovies() {
   if (this.selectedUser === 'all') {
     this.filteredMovies = this.movies; // Show all movies if 'All Users' is selected
   } else {
-    this.filteredMovies = this.movies.filter(movie => movie.user.username === this.selectedUser);
+    this.movieService.getFilteredMovies(this.selectedUserId).subscribe();
+    this.movieServiceSubscription = this.movieService.filteredMovieSubject.subscribe(data => {
+      this.filteredMovies = data;
+    });
   }
 }
 
 sortMovies() {
   switch (this.sortCriterion) {
     case 'date':
-      this.filteredMovies.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
+      this.movieService.getSortedMoviesByDate().subscribe();
+    this.movieServiceSubscription = this.movieService.sortByDateMovieSubject.subscribe(data => {
+      this.filteredMovies = data;
+      console.log('Dates are ', data);
+    });
       break;
     case 'likes':
-      this.filteredMovies.sort((a, b) => b.likesCount - a.likesCount);
+      this.movieService.getSortedMoviesByLikes().subscribe();
+      this.movieServiceSubscription = this.movieService.sortByLikeMovieSubject.subscribe(data => {
+        this.filteredMovies = data;
+        console.log('Likes are ', data);
+      });
       break;
     case 'hates':
-      this.filteredMovies.sort((a, b) => b.hatesCount - a.hatesCount);
+      this.movieService.getSortedMoviesByHates().subscribe();
+      this.movieServiceSubscription = this.movieService.sortByHateMovieSubject.subscribe(data => {
+        this.filteredMovies = data;
+        console.log('Hates are ', data);
+      });
       break;
   }
 }

@@ -19,8 +19,8 @@ public class Movie {
     private LocalDate dateAdded;
     @ManyToOne
     private User user;
-    private int likesCount;
-    private int hatesCount;
+    private int likes;
+    private int hates;
     
 	public Long getId() {
 		return id;
@@ -52,17 +52,17 @@ public class Movie {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	public int getLikesCount() {
-		return likesCount;
+	public int getLikes() {
+		return likes;
 	}
-	public void setLikesCount(int likesCount) {
-		this.likesCount = likesCount;
+	public void setLikes(int likes) {
+		this.likes = likes;
 	}
-	public int getHatesCount() {
-		return hatesCount;
+	public int getHates() {
+		return hates;
 	}
-	public void setHatesCount(int hatesCount) {
-		this.hatesCount = hatesCount;
+	public void setHates(int hates) {
+		this.hates = hates;
 	}
 
 

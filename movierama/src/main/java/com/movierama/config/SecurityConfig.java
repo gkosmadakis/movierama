@@ -34,7 +34,7 @@ public class SecurityConfig {
 	        .and()
 	        .authorizeRequests()
 	        .antMatchers("/api/auth/**").permitAll()
-            .antMatchers("/h2-console/**").permitAll()
+            //.antMatchers("/h2-console/**").permitAll()
             .antMatchers("/signup", "/login", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()  // Allow access without authentication
             //.anyRequest().authenticated()
             .and()
